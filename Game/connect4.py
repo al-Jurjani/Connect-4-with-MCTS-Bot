@@ -32,9 +32,9 @@ class connect4:
                 else:
                     self.yellowWins += 1
                 self.playAgain()
-
-        self.printBoard()
-        print("All slots filled!")
+            elif (self.slotsRemaining == 0):
+                print("All slots filled! Game drawn!")
+                self.playAgain()
 
     def curPlayer(self):
         if self.slotsRemaining % 2 == 0:
@@ -81,7 +81,7 @@ class connect4:
         if response.lower() in {'y', 'yes', 'ok', 'okay', 'k'}:
             self.initBoard()
             self.slotsRemaining = 42
-        elif response.lower() == 'n':
+        elif response.lower() in {'n', 'no', 'na', 'nop', 'nope'}:
             print("Red's total wins: " + str(self.redWins))
             print("Yellow's total wins: " + str(self.yellowWins))
             self.slotsRemaining = 0
