@@ -16,13 +16,23 @@ class connect4:
 
     def playGame(self):
         col = -1
+        row = -1
         curPlayer = ' '
         while(self.slotsRemaining > 0):
             self.printBoard()
             curPlayer = self.curPlayer()
             col = self.colPos()
-            self.enterToken(col, curPlayer)
+            row = self.enterToken(col, curPlayer)
             self.slotsRemaining -= 1
+
+            if self.checkVer(col, curPlayer) | self.checkHor(row, curPlayer):
+                print("Player '" + curPlayer + "' has won!")
+                if curPlayer == 'X':
+                    self.redWins += 1
+                else:
+                    self.yellowWins += 1
+                self.playAgain()
+
         self.printBoard()
         print("All slots filled!")
 
@@ -52,9 +62,38 @@ class connect4:
         for i in range(5, -1, -1):
             if self.board[i][col] == ' ':
                 self.board[i][col] = curPlayer
-                break
+                return i
         
+    def checkVer(self, col, curPlayer):
+        for i in range(0, 3):
+            if self.board[i][col] == curPlayer and self.board[i+1][col] == curPlayer and self.board[i+2][col] == curPlayer and self.board[i+3][col] == curPlayer:
+                return True
+        return False
+    
+    def checkHor(self, row, curPlayer):
+        for i in range(0, 3):
+            if self.board[row][i] == curPlayer and self.board[row][i+1] == curPlayer and self.board[row][i+2] == curPlayer and self.board[row][i+3] == curPlayer:
+                return True
+        return False
 
+    def playAgain(self):
+        response = input("Do you want to play again? (y/n)\n")
+        if response.lower() in {'y', 'yes', 'ok', 'okay', 'k'}:
+            self.initBoard()
+            self.slotsRemaining = 42
+        elif response.lower() == 'n':
+            print("Red's total wins: " + str(self.redWins))
+            print("Yellow's total wins: " + str(self.yellowWins))
+            self.slotsRemaining = 0
+
+
+    def initBoard(self):
+        self.board = np.array([[' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                      [' ', ' ', ' ', ' ', ' ', ' ', ' ']])
 
     def printBoard(self):
         print("    1     2    3    4    5    6    7   ")
