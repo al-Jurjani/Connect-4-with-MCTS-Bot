@@ -42,7 +42,7 @@ class connect4:
             print("Player 1's turn. Token = 'X'")
             return 'X'
         else:
-            print("Player 1's turn. Token = 'O'")
+            print("Player 2's turn. Token = 'O'")
             return 'O'
     
     def colPos(self):
