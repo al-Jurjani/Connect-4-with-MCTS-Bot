@@ -25,7 +25,8 @@ class connect4:
             row = self.enterToken(col, curPlayer)
             self.slotsRemaining -= 1
 
-            if self.checkVer(col, curPlayer) | self.checkHor(row, curPlayer):
+            if self.checkVer(col, curPlayer) | self.checkHor(row, curPlayer) | self.checkDiag(row, col, curPlayer):
+                self.printBoard()
                 print("Player '" + curPlayer + "' has won!")
                 if curPlayer == 'X':
                     self.redWins += 1
@@ -76,6 +77,31 @@ class connect4:
                 return True
         return False
 
+    def checkDiag(self, row, col, curPlayer):
+        # Define directions for diagonal checking
+        directions = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+        # Check each direction
+        for d in directions:
+            count = 1  # Initialize count for consecutive tokens
+            # Check tokens in the diagonal direction
+            for i in range(1, 4):  # Check up to 3 tokens away from the current position
+                # Calculate new position
+                new_col = col + i * d[0]
+                new_row = row + i * d[1]
+                # Check if new position is within the board boundaries
+                if 0 <= new_col < len(self.board[0]) and 0 <= new_row < len(self.board):
+                    # Check if the token in the new position is the same as the current token
+                    if self.board[new_row][new_col] == self.board[row][col]:
+                        count += 1
+                    else:
+                        break  # Break if the consecutive streak is broken
+                else:
+                    break  # Break if the new position is out of bounds
+            # Check if we have a winner
+            if count >= 4:
+                return True  # Return True if there are 4 or more consecutive tokens in a diagonal direction
+        return False  # Return False if no diagonal win is found
+
     def playAgain(self):
         response = input("Do you want to play again? (y/n)\n")
         if response.lower() in {'y', 'yes', 'ok', 'okay', 'k'}:
@@ -85,7 +111,6 @@ class connect4:
             print("Red's total wins: " + str(self.redWins))
             print("Yellow's total wins: " + str(self.yellowWins))
             self.slotsRemaining = 0
-
 
     def initBoard(self):
         self.board = np.array([[' ', ' ', ' ', ' ', ' ', ' ', ' '],
