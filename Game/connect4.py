@@ -51,14 +51,14 @@ class connect4:
             col = int(input("Choose what column to insert your token in: 1-7\n")) - 1
             if col < 0 or col > 6:
                 print("Please enter a number between 1 and 7.")
-                return self.colPos()
+                return self.colPos(height)
             if height[col] == 0:
                 print("The column is already full! Enter into another column!")
-                return self.colPos()
+                return self.colPos(height)
             return col
         except ValueError:
             print("Invalid input. Please enter a number between 1 and 7.")
-            return self.colPos()
+            return self.colPos(height)
 
     def enterToken(self, col, height, curPlayer):
         height[col] -= 1
