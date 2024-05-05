@@ -14,7 +14,7 @@ class connect4:
         curPlayer = ' '
         while(self.board.slotsRemaining > 0):
             self.board.printBoard()
-            curPlayer = self.curPlayer(self.board.slotsRemaining)
+            curPlayer = self.board.curPlayer()
             col = self.colPos(self.board)
             self.board.updateBoard(col, curPlayer)
             row = self.board.height[col]
@@ -30,14 +30,6 @@ class connect4:
             elif (self.board.slotsRemaining == 0):
                 print("All slots filled! Game drawn!")
                 self.playAgain()
-
-    def curPlayer(self, slotsRemaining):
-        if slotsRemaining % 2 == 0:
-            print("Player 1's turn. Token = 'X'")
-            return 'X'
-        else:
-            print("Player 2's turn. Token = 'O'")
-            return 'O'
 
     def colPos(self, board):
         try:

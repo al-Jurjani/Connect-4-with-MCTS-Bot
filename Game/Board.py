@@ -8,6 +8,7 @@ class Board:
                       [' ', ' ', ' ', ' ', ' ', ' ', ' ']])
     height = np.array([6, 6, 6, 6, 6, 6, 6])
     slotsRemaining = 42
+    gameFinished = False
 
     def __init__(self) -> None:
         pass
@@ -21,21 +22,52 @@ class Board:
                       [' ', ' ', ' ', ' ', ' ', ' ', ' ']])
         self.height = np.array([6, 6, 6, 6, 6, 6, 6])
         self.slotsRemaining = 42
-    
+        self.gameFinished = False
+
+    def curPlayer(self):
+        if self.slotsRemaining == 0:
+            self.gameFinished = True
+            print("All slots Filled. Game Drawn!")
+        elif self.slotsRemaining % 2 == 0:
+            print("Player 1's turn. Token = 'X'")
+            print("Slots Remaining: " + str(self.slotsRemaining))
+            return 'X'
+        else:
+            print("Player 2's turn. Token = 'O'")
+            print("Slots Remaining: " + str(self.slotsRemaining))
+            return 'O'
+
+    def curPlayerBot(self):
+        if self.slotsRemaining == 0:
+            self.gameFinished = True
+            print("All slots Filled. Game Drawn!")
+        elif self.slotsRemaining % 2 == 0:
+            # print("Player 1's turn. Token = 'X'")
+            # print("Slots Remaining: " + str(self.slotsRemaining))
+            return 'X'
+        else:
+            # print("Player 2's turn. Token = 'O'")
+            # print("Slots Remaining: " + str(self.slotsRemaining))
+            return 'O'
+
     def updateBoard(self, col, token):
         self.height[col] -= 1
         self.board[self.height[col]][col] = token
         self.slotsRemaining -= 1
-    
+        if self.slotsRemaining == 0:
+            self.gameFinished = True
+
     def checkVer(self, col, curPlayer):
         for i in range(0, 3):
             if self.board[i][col] == curPlayer and self.board[i+1][col] == curPlayer and self.board[i+2][col] == curPlayer and self.board[i+3][col] == curPlayer:
+                self.gameFinished = True
                 return True
         return False
-    
+
     def checkHor(self, row, curPlayer):
         for i in range(0, 3):
             if self.board[row][i] == curPlayer and self.board[row][i+1] == curPlayer and self.board[row][i+2] == curPlayer and self.board[row][i+3] == curPlayer:
+                self.gameFinished = True
                 return True
         return False
 
@@ -61,14 +93,13 @@ class Board:
                     break  # Break if the new position is out of bounds
             # Check if we have a winner
             if count >= 4:
-                print("true")
+                self.gameFinished = True
                 return True  # Return True if there are 4 or more consecutive tokens in a diagonal direction
-        print("false")
         return False  # Return False if no diagonal win is found
 
     def checkFour(self, row, col, curPlayer):
         return self.checkHor(row, curPlayer) | self.checkVer(col, curPlayer) | self.checkDiag(row, col, curPlayer)
-    
+
     def printBoard(self):
         print("    1     2    3    4    5    6    7   ")
         print("  ____________________________________")
@@ -80,9 +111,9 @@ class Board:
         print("  ____________________________________\n\n")
 
     # Following Methods for AI Bots
-    def listOfMoves(self, height):
-        moves = list
-        for i in range(0, 6):
-            if height[i] > 0:
+    def listOfMoves(self):
+        moves = []
+        for i in range(0, 7):
+            if self.height[i] > 0:
                 moves.append(i)
         return moves
