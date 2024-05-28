@@ -25,18 +25,18 @@ class Node:
         self.col = col
 
 class mcts: 
-    def __init__(self, root):
-        self.root = root
+    # def __init__(self, root):
+    #     self.root = root
 
     def search(self, node = Node, token = str) -> int:
         col = -1
         scoreSheet = {1: 1, 0: -1}
-        for i in range(50):
-            # print("Root Node")
-            # print(node.board.board)
-
+        print("Root Node")
+        print(node.board.board)
+        print(node.board.height)
+        for i in range(1000):
             # Step 1: Selection
-            print("SELECTION")
+            # print("SELECTION")
             while node.expanded:
                 # print("SOME CHILD SELECTED")
                 node = self.selection(node)
@@ -45,7 +45,7 @@ class mcts:
             print()
 
             # Step 2: Expansion
-            print("EXPANSION")
+            # print("EXPANSION")
             self.expansion(node)
             # print("EXPANSION COMPLETE.")
             # print("CHILDREN GENERATED = " + str(node.children))
@@ -53,7 +53,7 @@ class mcts:
             print()
 
             # Step 3: Simulation
-            print("SIMULATION")
+            # print("SIMULATION")
             # print("Node Selected")
             # print(node.board.board)
             print()
@@ -63,7 +63,7 @@ class mcts:
             # print("Score for this branch: " + str(score) + "\n")
 
             # Step 4: Back-Propogation
-            print("Back Propogation")
+            # print("Back Propogation")
             node = self.backProp(score, node)
             print()
 
@@ -96,6 +96,7 @@ class mcts:
                 # print(newNode.board.board)
                 node.children.append(newNode)
                 node.expanded = True
+                # print(node.board.board)
 
     # simulate from given node to end node, whether leaf or before
     def simulation(self, node = Node, token = str):
@@ -104,20 +105,20 @@ class mcts:
             row = newBoard.height[i]
             if row != 6:
                 if newBoard.checkFour(newBoard.height[i], i, curPlayer='X'):
-                    print("Chosen node's board already has a winning configuration")
+                    # print("Chosen node's board already has a winning configuration")
                     if (token == 'X'): # Game ended with bot win, not a draw
-                        print("Bot won!")
+                        # print("Bot won!")
                         return 1
                     else:
-                        print("Bot lost/Game Drawn")
+                        # print("Bot lost/Game Drawn")
                         return 0
                 elif newBoard.checkFour(newBoard.height[i], i, curPlayer='O'):
-                    print("Chosen node's board already has a winning configuration")
+                    # print("Chosen node's board already has a winning configuration")
                     if (token == 'O'): # Game ended with bot win, not a draw
-                        print("Bot won!")
+                        # print("Bot won!")
                         return 1
                     else:
-                        print("Bot lost/Game Drawn")
+                        # print("Bot lost/Game Drawn")
                         return 0
         
         while not newBoard.gameFinished:
@@ -129,10 +130,10 @@ class mcts:
             newBoard.checkFour(newBoard.height[move], move, tempToken)
         # print(newBoard.board)
         if (tempToken == token and newBoard.slotsRemaining != 0): # Game ended with bot win, not a draw
-            print("Bot won!")
+            # print("Bot won!")
             return 1
         else:
-            print("Bot lost/Game Drawn")
+            # print("Bot lost/Game Drawn")
             return 0
 
     # go back up the path, updating values
@@ -154,17 +155,56 @@ class mcts:
                 # print("Visit Count of node:" + str(node.visitCount))
                 return node
 
+# test = Board()
+# test.board = np.array([[' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#                       [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#                       [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#                       [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#                       [' ', ' ', ' ', 'O', ' ', ' ', ' '],
+#                       [' ', ' ', ' ', 'X', ' ', ' ', ' ']])
+# test.height = np.array([6, 6, 6, 4, 6, 6, 6])
+# test.slotsRemaining = 40
 
-test = Board()
-test.board = np.array([[' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                      [' ', ' ', ' ', 'O', ' ', ' ', ' '],
-                      [' ', ' ', ' ', 'X', ' ', ' ', ' ']])
-test.height = np.array([6, 6, 6, 4, 6, 6, 6])
-test.slotsRemaining = 40
+# testNode = Node(test, None, [], 0, 0, False, -1)
+# col = mcts().search(testNode, 'X')
+# print("COLUMN SELECTED: " + str(col))
 
-testNode = Node(test, None, [], 0, 0, False, -1)
-col = mcts(testNode).search(testNode, 'X')
-print(col)
+# test.updateBoard(col, 'X')
+# testNode = Node(test, None, [], 0, 0, False, -1)
+# col = mcts().search(testNode, 'O')
+# print("COLUMN SELECTED: " + str(col))
+
+redWins = 0
+yellowWins = 0
+
+board = Board()
+opponent = board.twoPlayer()
+
+while (not board.gameFinished):
+    board.printBoard()
+    if board.slotsRemaining % 2 == 0:
+        print("Bots turn!")
+        curPlayer = 'X'
+        node = Node(board, None, [], 0, 0, False, -1)
+        col = mcts().search(node, curPlayer)
+        print(col)
+        board.updateBoard(col, curPlayer)
+        row = board.height[col]
+    else:
+        print("Your turn!")
+        curPlayer = 'O'
+        col = board.colPos()
+        board.updateBoard(col, curPlayer)
+        row = board.height[col]
+
+    if board.checkFour(row, col, curPlayer):
+        board.printBoard()
+        print("Player '" + curPlayer + "' has won!")
+        if curPlayer == 'X':
+            redWins += 1
+        else:
+            yellowWins += 1
+        board.playAgain()
+    elif board.slotsRemaining == 0:
+        print("All slots filled! Game drawn!")
+        board.playAgain()

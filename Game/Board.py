@@ -49,6 +49,20 @@ class Board:
             # print("Player 2's turn. Token = 'O'")
             # print("Slots Remaining: " + str(self.slotsRemaining))
             return 'O'
+    
+    def colPos(self):
+        try:
+            col = int(input("Choose what column to insert your token in: 1-7\n")) - 1
+            if col < 0 or col > 6:
+                print("Please enter a number between 1 and 7.")
+                return self.colPos()
+            if self.height[col] == 0:
+                print("The column is already full! Enter into another column!")
+                return self.colPos()
+            return col
+        except ValueError:
+            print("Invalid input. Please enter a number between 1 and 7.")
+            return self.colPos()
 
     def updateBoard(self, col, token):
         self.height[col] -= 1
@@ -97,6 +111,30 @@ class Board:
                 return True  # Return True if there are 4 or more consecutive tokens in a diagonal direction
         return False  # Return False if no diagonal win is found
 
+    def twoPlayer(self):
+        response = input("Do you want to play against a player or bot?")
+        if response.lower() in {'p', 'Player'}:
+            return True
+        elif response.lower() in {'b', 'bot'}:
+            return False
+    
+    def goFirst(self):
+        response = input("Who goes first? Red or Yellow")
+        if response.lower() in {'r', 'red'}:
+            return True
+        elif response.lower() in {'y', 'yellow'}:
+            return False
+
+    def playAgain(self):
+        response = input("Do you want to play again? (y/n)\n")
+        if response.lower() in {'y', 'yes', 'ok', 'okay', 'k'}:
+            self.initBoard()
+            return 42, np.array([6, 6, 6, 6, 6, 6, 6])
+        elif response.lower() in {'n', 'no', 'na', 'nop', 'nope'}:
+            # print("Red's total wins: " + str(self.redWins))
+            # print("Yellow's total wins: " + str(self.yellowWins))
+            self.slotsRemaining = 0
+
     def checkFour(self, row, col, curPlayer):
         return self.checkHor(row, curPlayer) | self.checkVer(col, curPlayer) | self.checkDiag(row, col, curPlayer)
 
@@ -117,3 +155,11 @@ class Board:
             if self.height[i] > 0:
                 moves.append(i)
         return moves
+
+    def __deepcopy__(self, memo):
+        new_board = Board()
+        new_board.board = np.copy(self.board)  # Ensure a true deep copy of the array
+        new_board.height = np.copy(self.height)  # Ensure a true deep copy of the array
+        new_board.slotsRemaining = self.slotsRemaining
+        new_board.gameFinished = self.gameFinished
+        return new_board

@@ -1,5 +1,6 @@
 import numpy as np
 from Board import Board
+from monteCarlo import mcts, Node
 class connect4:
     redWins = 0
     yellowWins = 0
@@ -12,12 +13,22 @@ class connect4:
         col = -1
         row = -1
         curPlayer = ' '
-        while(self.board.slotsRemaining > 0):
+        bot = mcts()
+        while(not self.board.gameFinished):
             self.board.printBoard()
-            curPlayer = self.board.curPlayer()
-            col = self.colPos(self.board)
-            self.board.updateBoard(col, curPlayer)
-            row = self.board.height[col]
+            if (self.board.slotsRemaining % 2 != 0):
+                curPlayer = self.board.curPlayer()
+                col = self.colPos(self.board)
+                self.board.updateBoard(col, curPlayer)
+                row = self.board.height[col]
+            else:
+                print("Bots turn: ")
+                node = Node(self.board, None, [], 0, 0, False, -1)
+                bot = mcts()
+                col = bot.search(node, 'O')
+                print(col)
+                self.board.updateBoard(col, 'O')
+                row = self.board.height[col]
 
             if self.board.checkFour(row, col, curPlayer):
                 self.board.printBoard()
@@ -57,3 +68,17 @@ class connect4:
 
 game = connect4()
 game.playGame()
+
+# test = Board()
+# test.board = np.array([[' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#                       [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#                       [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+#                       [' ', 'X', 'X', 'O', ' ', ' ', ' '],
+#                       ['X', 'X', 'O', 'O', ' ', ' ', ' '],
+#                       ['X', 'O', 'O', 'O', 'X', ' ', ' ']])
+# test.height = np.array([4, 3, 3, 3, 5, 6, 6])
+# test.slotsRemaining = 30
+
+# testNode = Node(test, None, [], 0, 0, False, -1)
+# col = mcts(testNode).search(testNode, 'X')
+# print(col)
