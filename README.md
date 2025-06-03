@@ -69,10 +69,11 @@ python connect4.py
 
 ```
 Connect-4-with-MCTS-Bot/
-├── connect4.py         # Main game loop and user interface
-├── Board.py           # Board class with game logic and state management
-├── monteCarlo.py      # MCTS algorithm implementation
-└── README.md         # Project documentation
+├── game/
+│   ├── connect4.py         # Main game loop and user interface
+│   ├── Board.py           # Board class with game logic and state management
+│   └── monteCarlo.py      # MCTS algorithm implementation
+└── README.md             # Project documentation
 ```
 
 ## 🔧 Code Architecture
