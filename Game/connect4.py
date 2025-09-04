@@ -16,18 +16,20 @@ class connect4:
         bot = mcts()
         while(not self.board.gameFinished):
             self.board.printBoard()
-            if (self.board.slotsRemaining % 2 != 0):
-                curPlayer = self.board.curPlayer()
-                col = self.colPos(self.board)
+            if (self.board.slotsRemaining % 2 == 0):
+                print("Slots remaining: " + str(self.board.slotsRemaining))
+                print("Bots turn!")
+                curPlayer = self.board.curPlayerBot()
+                node = Node(self.board, None, [], 0, 0, False, -1)
+                col = mcts().search(node, curPlayer)
+                print(col)
                 self.board.updateBoard(col, curPlayer)
                 row = self.board.height[col]
             else:
-                print("Bots turn: ")
-                node = Node(self.board, None, [], 0, 0, False, -1)
-                bot = mcts()
-                col = bot.search(node, 'O')
-                print(col)
-                self.board.updateBoard(col, 'O')
+                print("Player's turn: ")
+                curPlayer = self.board.curPlayer()
+                col = Board.colPos(self.board)
+                self.board.updateBoard(col, curPlayer)
                 row = self.board.height[col]
 
             if self.board.checkFour(row, col, curPlayer):
@@ -41,20 +43,6 @@ class connect4:
             elif (self.board.slotsRemaining == 0):
                 print("All slots filled! Game drawn!")
                 self.playAgain()
-
-    def colPos(self, board):
-        try:
-            col = int(input("Choose what column to insert your token in: 1-7\n")) - 1
-            if col < 0 or col > 6:
-                print("Please enter a number between 1 and 7.")
-                return self.colPos(board)
-            if board.height[col] == 0:
-                print("The column is already full! Enter into another column!")
-                return self.colPos(board)
-            return col
-        except ValueError:
-            print("Invalid input. Please enter a number between 1 and 7.")
-            return self.colPos(board)
 
     def playAgain(self):
         response = input("Do you want to play again? (y/n)\n")
@@ -82,3 +70,7 @@ game.playGame()
 # testNode = Node(test, None, [], 0, 0, False, -1)
 # col = mcts(testNode).search(testNode, 'X')
 # print(col)
+
+if __name__ == "__main__":
+    game = connect4()
+    game.playGame()
